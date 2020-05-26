@@ -77,23 +77,7 @@ withCallingHandlers(
 ```
 :::
 
-The following prints the message once:
-
-```{r}
-withCallingHandlers(
-  message = function(cnd) cat("Caught a message!\n"), 
-  {
-    warning("Someone there?")
-    message("Why, yes!")
-  }
-)
-```
-
-and it comes in the warning message, so it's not really a "direct" print
-
-:::TODO
-Oh wait, the handler code is named `message`, so is it possible that the two message calls in the protected block are actually calling both `base::message` and the message - named handler?
-:::
+`withCallingHandlers` could be understood as: "for each {message}, do x"
 
 :::question
 > The return value of a calling handler is ignored because the code continues to execute after the handler completes; where would the return value go? That means that calling handlers are only useful for their side-effects.
@@ -432,54 +416,65 @@ That's exactly it - this was a warning not to use `inturrupt` in your functions!
 What environment(s) these restarts are called within, or if that even applies or matters
 :::
 
-Given this little example:
+Note: for this example I set my Environment panel in Rstudio to "Manual Refresh Only" (the curly arrow menu) while running this to make sure it wasn't doing anything to confuse me.
 
-```{r}
-# low level function
-# if text isn't correct then abort with class malformed_text
-is_correct <- function(text) {
-  print('parent in low: '); print(env_parent())
-  print('current in low: '); print(env_parent())
-  if (text != "CORRECT") {
-    msg <- paste0(text, " needs to be 'CORRECT'")
-    abort(
-      "malformed_text",
-      message = msg,
-      text = text
-    )
-  }
-  return(text)
-}
-# medium level function
-# apply low level function to all text in a list
-# if it doesn't pass give it the restart skip_text
-# which will change that entry to NA
-replace_not_correct <- function(all_text) {
-  # f <- function(x) { print(current_env()); is_correct(x) }
-  lapply(all_text, function(text) {
+```{r, eval=FALSE}
+expensive_function <- function(x,
+                               # warning print the warning and send us to browser
+                               warning = function(w) { print(paste('warning:', w ));  browser() },
+                               # error print the error and send us to browser
+                               error=function(e) { print(paste('e:',e )); browser()} ) {
+  print(paste("big expensive step we don't want to repeat for x:",x))
+  z <- x  # the "expensive operation"
+  print("Main function caller_env:")
+  print(rlang::caller_env())
+  print("Main function current_env:")
+  print(rlang::current_env())
+  print("Main function parent:")
+  print(rlang::env_parent(rlang::current_env(), 1))
+  repeat
+  # second function on z that isn't expensive but could potentially error
+  withRestarts(
     withRestarts(
-      # f(text),
-      { print('parent in mid: ') ; print(env_parent()); print('current in mid: '); print(current_env()); is_correct(text) },
-      skip_text = function(e){ NA;  print('parent in mid skip: '); print(env_parent()); print('current in mid skip: '); print(current_env())}
-    )
-  })
-}
-# res <- replace_not_correct(list('A', 'B', 'C'))
-# res <- replace_not_correct(list('CORRECT', 'A'))
-# res
-# high level function
-# if you have an error of type malformed_text, 
-# use the restart from the midlevel function
-analyze_text <- function(all_text) {
-  withCallingHandlers(
-    malformed_text = function(e) invokeRestart("skip_text"),
-    lapply(all_text, replace_not_correct)
+      withCallingHandlers(
+        {
+          print("withCallingHandlers caller_env:")
+          print(rlang::caller_env())
+          print("withCallingHandlers current_env:")
+          print(rlang::current_env())
+          print("withCallingHandlers parent:")
+          print(rlang::env_parent(rlang::current_env(), 1))
+          print(paste("attempt cheap operation for z:",z))
+          return(log(z))
+        },
+        warning = warning,
+        error = error
+      ),
+      force_positive = function() {
+        z <<- -z
+        print("force_positive caller_env:")
+        print(rlang::caller_env())
+        print("force_positive current_env:")
+        print(rlang::current_env())
+        print("force_positive parent:")
+        print(rlang::env_parent(rlang::current_env(), 1))
+      }
+    ),
+    set_to_one = function() {z <<- 1}
   )
 }
-analyze_text(list("CORRECT", "NOT", "CORRECT"))
+expensive_function(-1)
 ```
 
-So, the parent environment of the handler (is that the right term?) called skip_text in the mid-level function is the environment of the expr part of withRestarts (i.e. the first parameter), also in the mid-level function.
+You can run it yourself (and then `invokeRestart("force_positive")`) to see the results, but to summarize:
+
+- The `withCallingHandlers` part is executing in exactly the same environment as the function.
+- The `force_positive` restart is executing in its own new environment. 
+- The parent of that environment is the execution environment of the main function.
+
+:::TODO
+The `caller_env` for `force_positive`, though, is still a bit of a mystery. Some further poking found that its grandparent is the base package's namespace, but I don't grok why. Maybe because it's the `browser()` environment? Is that a thing?
+:::
 
 :::question
 Are there any default restarts include in base R so that you could `invokeRestart("XXX")` or is the restart always user defined?
