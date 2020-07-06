@@ -4,7 +4,7 @@ This repo contains 3 main folders:
 
 - QandA: A bookdown of questions (and answers) on the chapters that come up during meetings (or between!). We're also using this to try to answer questions marked "started" in the solutions manual with the potential goal of submitting PRs with our own answers!
 
-- Presentations: each week a presenter will give a talk summarizing the chapter, and discussing applications using the beer dataset. We meet every week at Thursday, 8:00 PM Eastern on [Zoom](notredame.zoom.us/j/490502945). 
+- Presentations: each week a presenter will give a talk summarizing the chapter, and discussing applications using the beer dataset. We meet every week on Tuesday at 8:00 PM Eastern using Jitsi. Join our Slack channel for more info!
 
 - Data: The dataset we will be using for presentations is on [Beer Production](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-03-31/readme.md) 
 
@@ -28,7 +28,7 @@ All Meetings Scheduled for 8:00 PM Eastern unless otherwise noted
 - 2020-06-25 Chapter 14 - R6: Tyler Grant Smith: ([Slides](TODO) | [Zoom Recording](https://www.youtube.com/watch?v=hPjaOdprgow&feature=youtu.be))
 - 2020-06-30 Chapter 15 - S4: Pavitra Chakravarty: ([Slides](https://r4ds.github.io/bookclub-Advanced_R/Presentations/Week15/Chapter15.html#1) | [Zoom Recording](TODO))
 - 2020-07-07 Chapter 16 - Tradeoffs/OOP Wrapup: [Tan Ho](https://twitter.com/_tanho) 
-- 2020-07-14 Chapter 17 - Metaprogramming, big picture:
+- 2020-07-14 Chapter 17 - Metaprogramming, big picture: [Maya Gans](https://maya.rbind.io)
 - 2020-07-21 Chapter 18 - Expressions:
 - 2020-07-28 Chapter 19 - Quasiquotation:
 - 2020-07-04 Chapter 20 - Evaluation:
