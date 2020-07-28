@@ -24,7 +24,7 @@
 <meta name="author" content="R4DS Reading Group" />
 
 
-<meta name="date" content="2020-07-25" />
+<meta name="date" content="2020-07-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -305,9 +305,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="16.0.1" data-path="trade-offs.html"><a href="trade-offs.html#using-our-example-from-the-s4-chapter"><i class="fa fa-check"></i><b>16.0.1</b> Using our example from the S4 Chapter:</a></li>
 <li class="chapter" data-level="" data-path="trade-offs.html"><a href="trade-offs.html#we-can-do-this-with-s3"><i class="fa fa-check"></i>We can do this with S3:</a></li>
 </ul></li>
-<li class="chapter" data-level="17" data-path="big-picture.html"><a href="big-picture.html"><i class="fa fa-check"></i><b>17</b> 17 Big Picture</a><ul>
-<li class="chapter" data-level="" data-path="big-picture.html"><a href="big-picture.html#quosures"><i class="fa fa-check"></i>17.8 Quosures</a></li>
-</ul></li>
+<li class="chapter" data-level="17" data-path="big-picture.html"><a href="big-picture.html"><i class="fa fa-check"></i><b>17</b> 17 Big Picture</a></li>
 <li class="chapter" data-level="18" data-path="expressions.html"><a href="expressions.html"><i class="fa fa-check"></i><b>18</b> Expressions</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -331,14 +329,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="big-picture" class="section level1">
 <h1><span class="header-section-number">Chapter 17</span> 17 Big Picture</h1>
-<div id="quosures" class="section level2 unnumbered">
-<h2>17.8 Quosures</h2>
 <div class="question">
-<p>What is meant here by “data mask”</p>
+<p>How would you succinctly define meta-programming - I want to say its “code that writes code”….? But I also want to say its what allows you to specify columns as their names without quotes, but I don’t quite understand how to tie that into “code that writes code”</p>
 </div>
-<div class="TODO">
-
+<p>Metaprogramming is using code as data. And data as code if you put the data together the right way.</p>
+<p>So how does that translate into specifying columns without quotes? You’re treating code as data and not actually evaluating it until you’re in a different context where the names used in the code/expressions have meanings they don’t have in the current context.</p>
+<p>Conceptualizing code as data you get to do data-centric things like modifying it, passing it to other functions, applying your own conventions for how to read the data etc</p>
+<div class="question">
+<p>Hadley uses VERY cautious wording, saying that calling meta-programming NSE is “sloppy” but the two terms seem highly related. How do we untangle them?</p>
 </div>
+<p>Taken from the <a href="https://cran.r-project.org/web/packages/lazyeval/vignettes/lazyeval.html#metaprogramming">lazyeval vignette</a></p>
+<blockquote>
+<p>The final use of non-standard evaluation is to do metaprogramming. This is a catch-all term that encompasses any function that does computation on an unevaluated expression. You can learn about metaprogrgramming in <a href="http://adv-r.had.co.nz/Expressions.html" class="uri">http://adv-r.had.co.nz/Expressions.html</a>, particularly <a href="http://adv-r.had.co.nz/Expressions.html#ast-funs" class="uri">http://adv-r.had.co.nz/Expressions.html#ast-funs</a>. Over time, the goal is to move all useful metaprogramming helper functions into this package, and discuss metaprogramming more here.</p>
+</blockquote>
+<p>The sloppiness is referring to NSE <em>functions</em> when it actually the function arguments that use NSE. The dplyr vignette says:</p>
+<blockquote>
+<p>“Tidy evaluation is a special type of non-standard evaluation used throughout the tidyverse.” and says it is used in two ways in dplyr: data masking and tidy selection.</p>
+</blockquote>
+<p>A great resource on lazyeval: <a href="https://arxiv.org/abs/1909.08958" class="uri">https://arxiv.org/abs/1909.08958</a></p>
 <div class="question">
 <p>I love the idea of creating templates then shoving in code using <code>!!</code> can we create a template that inserts a filtering statement into our tidypipeline?</p>
 <div class="sourceCode" id="cb624"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb624-1" data-line-number="1"><span class="co"># this is my template</span></a>
@@ -399,7 +407,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>so the forcing operation is kind of like performing surgery on the AST, where you cut out one node (the thing being forced) and replacing it with some other code.</p>
 
 </div>
-</div>
             </section>
 
           </div>
@@ -450,7 +457,7 @@ gitbook.start({
 },
 "download": ["AdvancedR_Companion.pdf", "AdvancedR_Companion.epub"],
 "toc": {
-"collapse": "section"
+"collapse": "subsection"
 }
 });
 });

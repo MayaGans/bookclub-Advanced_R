@@ -97,7 +97,7 @@ server <- function(input, output, session) {
   })
 
   output$expression <- renderPrint({
-    req(input$func)
+    print(argumentlist())
     do.call(call2, argumentlist(), quote = TRUE)
     })
 
